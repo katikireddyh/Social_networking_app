@@ -1,0 +1,10 @@
+<div class="row">
+  <div class="col-md-12">
+    <ul class="nav nav-pills">
+      <li<% if current_page?(merchant_bill_path(@bill)) %> class="active"<% end %>><%= link_to 'View', merchant_bill_path(@bill) %></li>
+      <li<% if current_page?(edit_merchant_bill_path(@bill)) %> class="active"<% end %>><%= link_to 'Edit', edit_merchant_bill_path(@bill) %></li>
+      <li<% if current_page?(transactions_merchant_bill_path(@bill)) %> class="active pull-right"<% else %> class="pull-right"<% end %>><%= link_to 'View Payments', transactions_merchant_bill_path(@bill) %></li>
+    </ul>
+  </div>
+</div>
+<br>

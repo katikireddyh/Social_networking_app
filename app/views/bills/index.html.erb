@@ -1,0 +1,73 @@
+<div class="col-md-12">
+  <ol class="breadcrumb">
+    <li class="active">Invoices</li>
+  </ol>
+</div>
+<div class="col-md-12">
+  <%= render 'shared/flash_messages' %>
+  <div class="row">
+    <div class="col-lg-2 col-md-1">
+      <%= link_to 'Add Bill', new_merchant_bill_path, class: 'btn btn-primary' %>
+    </div>
+    <div class="col-lg-6 col-md-6">
+      <ul class="nav nav-pills pull-right">
+        <li><strong style="line-height:2.5em;padding-right:0.5em;">Show bill status:</strong></li>
+        <li<% if @bill_status == 'all' %> class="active"<% end %>><a href="?bill_status=all&filter=<%= @filter %>">All</a></li>
+        <li<% if @bill_status == 'active' %> class="active"<% end %>><a href="?bill_status=active&filter=<%= @filter %>">Active</a></li>
+        <li<% if @bill_status == 'used' %> class="active"<% end %>><a href="?bill_status=used&filter=<%= @filter %>">Used</a></li>
+        <li<% if @bill_status == 'expired' %> class="active"<% end %>><a href="?bill_status=expired&filter=<%= @filter %>">Expired</a></li>
+      </ul>
+    </div>
+    <div class="col-lg-4 col-md-5">
+      <ul class="nav nav-pills pull-right">
+        <li><strong style="line-height:2.5em;padding-right:0.5em;">Show payments:</strong></li>
+        <li<% if @filter == 'all' %> class="active"<% end %>><a href="?bill_status=<%= @bill_status %>&filter=all">All</a></li>
+        <li<% if @filter == 'unpaid' %> class="active"<% end %>><a href="?bill_status=<%= @bill_status %>&filter=unpaid">Unpaid</a></li>
+        <li<% if @filter == 'paid' %> class="active"<% end %>><a href="?bill_status=<%= @bill_status %>&filter=paid">Paid</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr>
+  <table class="bills table table-bordered table-hover">
+    <thead>
+      <th>Title</th>
+      <th>Amount</th>
+      <th>Invoice Number</th>
+      <th>Status</th>
+      <th>Payments</th>
+      <th>Reusable</th>
+      <th>Expires</th>
+    </thead>
+    <tbody>
+      <% @bills.each do |bill| %>
+        <tr data-id="<%= bill.id %>">
+          <td><%= bill.title %></td>
+          <td>
+            <% if bill.amount %>
+              <%= number_to_currency bill.amount %>
+            <% end %>
+          </td>
+          <td><%= bill.invoice_number %></td>
+          <td><%= bill.status %></td>
+          <td><%= bill.paid_transactions.count + bill.paid_bywallet.count %></td>
+          <td><%= bill.reusable ? 'Yes' : 'No' %></td>
+          <td><%= bill.expires_at.blank? ? 'Never' : bill.expires_at.strftime('%m/%d/%Y') %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @bills %>
+</div>
+<script>
+  jQuery(document).on('page:change', function() {
+    jQuery('.bills > tbody > tr').click(function() {
+      var row = jQuery(this);
+      showBillDetails(row);
+    });
+  });
+
+  function showBillDetails(bill) {
+    var bill_id = bill.data('id');
+    window.location.href = '/bills/' + bill_id;
+  }
+</script>

@@ -1,0 +1,13 @@
+<div class="col-md-12">
+  <ol class="breadcrumb">
+    <li><%= link_to 'Mobile Pay', merchant_bills_path %></li>
+    <li class="active">Add Bill</li>
+  </ol>
+</div>
+<div class="col-md-12">
+  <%= render 'shared/flash_messages' %>
+
+  <h2 class="page-header">New Bill</h2>
+
+  <%= render 'form' %>
+</div>

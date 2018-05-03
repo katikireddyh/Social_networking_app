@@ -1,0 +1,38 @@
+<div class="col-md-12">
+  <ol class="breadcrumb">
+    <li><%= link_to 'Mobile Pay', merchant_bills_path %></li>
+    <li><%= link_to @bill.title, merchant_bill_path(@bill) %></li>
+    <li class="active">Payments</li>
+  </ol>
+</div>
+<div class="col-md-12">
+  <%= render 'secondary_nav' %>
+  <%= render 'shared/flash_messages' %>
+
+  <table class="transactions table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th style="width:33px;"></th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Fee</th>
+        <th>Donation</th>
+        <th>Customer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @transactions.each do |transaction| %>
+      <tr data-transaction_id="<%= transaction.id %>">
+        <td><span class="glyphicon <% if transaction.state == 'refunded' %>glyphicon-refresh<% else %>glyphicon-usd<% end %>"></span></td>
+        <td><%= transaction.created_at.strftime("%m/%d/%Y") %></td>
+        <td><%= number_to_currency(transaction.input_amount) %></td>
+        <td><%= number_to_currency(transaction.fee_amount) %></td>
+        <td><%= number_to_currency(transaction.donation_amount) %></td>
+        <td><%= transaction.consumer.name %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= paginate @transactions %>
+</div>

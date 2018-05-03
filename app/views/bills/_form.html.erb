@@ -1,0 +1,155 @@
+<%= form_for [:merchant, @bill] do |f| %>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="form-group">
+        <%= f.label :title %>
+        <%= f.text_field :title, autocomplete: 'off', class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <%= f.label :invoice_number, 'Invoice Number' %>
+        <%= f.text_field :invoice_number, autocomplete: 'off', class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :consumer_email %>
+        <%= f.text_field :consumer_email, autocomplete: 'off', class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :consumer_phone %>
+        <%= f.text_field :consumer_phone, autocomplete: 'off', class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <%= f.label :description, 'Bill Description' %>
+        <%= f.text_area :description, rows: 3, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-md-12">
+      <p><strong>Select Bill Type</strong> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Select &ldquo;Fixed Amount&rdquo; to specify the exact payment amount for your customer. Select &ldquo;Customer-Entered Amount&rdquo; to allow your customers to choose the amount to pay, which is perfect for donations or re-using one QR code for multiple bills."></span></p>
+    </div>
+    <div class="col-md-12">
+      <ul class="nav nav-pills nav-bordered">
+        <li<% if @bill.amount or (@bill.new_record? and !@bill.setting_customer_entered_amount) %> class="active"<% end %>>
+          <a href="#" id="setAmount">Fixed Amount</a>
+        </li>
+        <li<% unless @bill.amount or (@bill.new_record? and !@bill.setting_customer_entered_amount) %> class="active"<% end %>>
+          <a href="#" id="setConsumerDefinedAmount">Customer-Entered Amount</a>
+        </li>
+      </ul>
+    </div>
+    <div class="row<% unless @bill.amount or (@bill.new_record? and !@bill.setting_customer_entered_amount) %> hidden<% end %>" id="transactionAmount">
+      <div class="col-md-12">
+        <hr>
+        <div class="col-md-8">
+          <div class="form-group">
+            <%= f.label :amount %>
+            <%= f.text_field :amount, autocomplete: 'off', class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= f.label :tipping_enabled, 'Allow tips' %>
+            <%= f.check_box :tipping_enabled, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-md-12">
+      <p><strong>Select Type of Bill Availability</strong> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Select &ldquo;Reusable&rdquo; if your code can be used more than once. This option is great for events with multiple attendees and for businesses that would like the same QR code to be used by multiple clients."></span></p>
+    </div>
+    <%= f.check_box :reusable, class: 'hidden' %>
+    <div class="col-md-12">
+      <ul class="nav nav-pills nav-bordered">
+        <li<% if @bill.reusable %> class="active"<% end %>>
+          <a href="#" id="setReusable">Reusable</a>
+        </li>
+        <li<% unless @bill.reusable %> class="active"<% end %>>
+          <a href="#" id="setOneTimeUse">One-time</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <p><strong>Expiration Date</strong> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Enter an expiration date if your bill is time sensitive. Your QR code will no longer allow payment after 11:59 pm on the date you select."></span></p>
+      <div class="form-group">
+        <div class="input-group date" data-behavior="datepicker">
+          <%= f.text_field :expiration_date, autocomplete: 'off', class: 'form-control' %>
+          <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <% if @bill.new_record? %>
+      <%= f.button 'Add Bill', class: 'btn btn-primary btn-block', id: 'submit_bill', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Adding"} %>
+      <% else %>
+      <%= f.button 'Update Bill', class: 'btn btn-primary btn-block', id: 'submit_bill', data: {disable_with: "<i class='fa fa-spinner fa-spin'></i> Updating"} %>
+      <% end %>
+    </div>
+    <div class="col-md-2">
+      <%= link_to 'Cancel', @bill.new_record? ? merchant_bills_path : merchant_bill_path(@bill), class: 'btn btn-default' %>
+    </div>
+  </div>
+<% end %>
+<script>
+  jQuery('#setAmount').click(function(e) {
+    e.preventDefault();
+    jQuery('#transactionAmount').removeClass('hidden');
+    jQuery('#setConsumerDefinedAmount').parent().removeClass('active');
+    jQuery(this).parent().addClass('active');
+  });
+
+  jQuery('#setConsumerDefinedAmount').click(function(e) {
+    e.preventDefault();
+    jQuery('#transactionAmount').addClass('hidden');
+    jQuery('#setAmount').parent().removeClass('active');
+    jQuery(this).parent().addClass('active');
+  });
+
+  jQuery('#setOneTimeUse').click(function(e) {
+    e.preventDefault();
+    jQuery('#bill_reusable').prop('checked', false);
+    jQuery('#setReusable').parent().removeClass('active');
+    jQuery(this).parent().addClass('active');
+  });
+
+  jQuery('#setReusable').click(function(e) {
+    e.preventDefault();
+    jQuery('#bill_reusable').prop('checked', true);
+    jQuery('#setOneTimeUse').parent().removeClass('active');
+    jQuery(this).parent().addClass('active');
+  });
+
+  jQuery('#submit_bill').click(function(e) {
+    if (jQuery('#setConsumerDefinedAmount').parent().hasClass('active')) {
+      jQuery('#bill_amount').val('');
+      jQuery('#bill_tipping_enabled').prop('checked', false);
+    }
+    if (jQuery('#setAmount').parent().hasClass('active')) {
+      var bill_amount_blank = (jQuery('#bill_amount').val() === '');
+      if(bill_amount_blank) {
+        alert('Please set an amount.');
+        e.preventDefault();
+      }
+    }
+  });
+</script>

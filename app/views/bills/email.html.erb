@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @bill.title %></title>
+    <style>
+      * {
+        font-family: 'Helvetica', 'Arial', sans-serif;
+      }
+      h1 {
+        margin-bottom:0;
+      }
+      .email {
+        padding-left:5em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><%= @merchant.name %></h1>
+    <p><%= @bill.title %></p>
+    <% unless @bill.invoice_number.blank? %>
+      <p>Invoice #<%= @bill.invoice_number %></p>
+      <br><br>
+    <% end %>
+    <p><%= @bill.description %></p>
+    <br><br>
+    
+    <% unless @bill.amount.nil? %>
+      <p><strong>Amount: <%= number_to_currency(@bill.amount) %></strong></p>
+    <% end %>
+    
+    <p><%= link_to "Click here to pay your invoice online.", "https://mycmw.org/merchants/#{@bill.qr_code}/checkout_login", target: "_blank" %></p>
+    
+    <p>To pay instantly with your smartphone, use your Cause Mobile Wallet app to scan the QR code below.</p>
+    
+    <!--<p><em>Don&rsquo;t have the app? Download it from the App Store or from Google Play! You can text &ldquo;CAUSE&rdquo; to 95577 or click on the corresponding link below.</em></p> -->
+    
+    <p><em>Don&rsquo;t have the app? Download it from the App Store (see the link to the app store below).</em></p>
+    
+    <div style="text-align:center; margin:0 auto;">
+      <br>
+      <!-- App Store -->
+      <a href="https://itunes.apple.com/us/app/cause-mobile-wallet/id819348696?mt=8" style="display:inline-block;overflow:hidden;background:url(//linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg) no-repeat;width:135px;height:40px;background-size:contain;" id="appstore-badge"></a>
+      
+      <!-- Google Play -->
+      <!-- <a href="https://play.google.com/store/apps/details?id=com.aratech.cause"><img alt="Android app on Google Play" src="http://developer.android.com/images/brand/en_app_rgb_wo_45.png" style="height:40px;" /></a> -->
+      <br><br><br>
+      <%= image_tag @bill.image.url, alt: 'QR code for Cause Mobile Wallet' %>
+      <p>Don&rsquo;t see the image? <%= link_to 'Click here', @bill.image.url, target: '_blank' %>.</p>
+    </div>
+    <!-- QR Code -->
+    <br>
+    
+    
+    
+    <p><strong>Feel free to contact us with any questions!</strong></p>
+    
+    <p><%= @merchant.phone %><% unless @merchant.email.blank? %><span class="email"><%= link_to @merchant.email, "mailto:#{@merchant.email}" %></span><% end %></p>
+  </body>
+</html>

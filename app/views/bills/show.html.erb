@@ -1,0 +1,122 @@
+<div class="col-md-12">
+  <ol class="breadcrumb">
+    <li><%= link_to 'Mobile Pay', merchant_bills_path %></li>
+    <li class="active"><%= @bill.title %></li>
+  </ol>
+</div>
+<div class="col-md-12">
+  <%= render 'secondary_nav' %>
+  <%= render 'shared/flash_messages' %>
+
+  <div class="row">
+    <div class="col-md-8">
+      <strong>Title</strong><br>
+      <%= @bill.title %>
+    </div>
+    <div class="col-md-4">
+      <strong>Invoice Number</strong><br>
+      <%= @bill.invoice_number %>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6">
+      <strong>Consumer Email</strong><br>
+      <%= @bill.consumer_email %>
+    </div>
+    <div class="col-md-6">
+      <strong>Consumer Phone</strong><br>
+      <%= @bill.consumer_phone.phony_formatted %>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-12">
+      <strong>Bill Description</strong><br>
+      <p><%= @bill.description %></p>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6">
+      <strong>Amount</strong><br>
+      <%= number_to_currency(@bill.amount) %>
+    </div>
+
+    <div class="col-md-3">
+      <strong>Allow tips</strong><br>
+      <% if @bill.tipping_enabled %>
+        Yes
+      <% else %>
+        No 
+      <% end %>
+    </div>
+
+    <div class="col-md-3">
+      <strong>Reusable</strong><br>
+      <% if @bill.reusable %>
+        Yes
+      <% else %>
+        No
+      <% end %>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6">
+      <strong>Expiration Date</strong><br>
+      <% if @bill.expires_at %>
+        <p><%= @bill.expires_at.strftime('%m/%d/%Y') %></p>
+      <% else %>
+        <p>Never</p>
+      <% end %>
+    </div>
+  </div>
+
+  <hr>
+
+  <% if @bill.image.exists? %>
+  <div class="row">
+    <div class="col-md-6">
+      <strong>QR Image</strong> <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Send this QR image to your customers, so they can pay you with the Cause Mobile Wallet app. You can copy and paste or drag the image into an email or document, Save Image to your computer, or Generate Email Template and paste our template into an email for you to customize. Note that if you copy and paste our entire email template, the images may be blocked by your recipients' email security settings until they accept downloading the images."></span><br>
+      <%= image_tag @bill.image.url, class: 'img-responsive' %>
+      <hr>
+      <div class="row">
+        <div class="col-md-3">
+          <a href="#" id="downloadQR" class="btn btn-block btn-primary">Save Image</a>
+        </div>
+        <div class="col-md-3">
+          <%= link_to 'Preview', preview_email_merchant_bill_path(@bill), class: 'btn btn-block btn-primary', target: '_blank', id: 'generate_email_template' %>
+        </div>
+        <div class="col-md-3">
+          <%= link_to 'Send Email', send_email_merchant_bill_path(@bill), class: 'btn btn-block btn-primary', id: 'send_email_merchant_bill' %>
+        </div>
+        <div class="col-md-3">
+          <%= link_to 'Send TXT', send_txt_merchant_bill_path(@bill), class: 'btn btn-block btn-primary', id: 'send_txt_merchant_bill' %>
+        </div>
+      </div>
+    </div>
+    <script>
+      jQuery('#downloadQR').click(function(e) {
+        e.preventDefault();
+        var a = jQuery('<a>').attr('href', '<%= @bill.image.url %>').attr('download', 'qr_code.png').appendTo('body');
+        a[0].click();
+        a.remove();
+      });
+      jQuery('#generate_email_template').click(function(e) {
+        e.preventDefault();
+        window.open(this.href, 'new_window', 'width=600, height=850, top=200, left=350');
+        return false;
+      });
+    </script>
+  </div>
+  <%  end %>
+</div>

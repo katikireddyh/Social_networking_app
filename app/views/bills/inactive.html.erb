@@ -1,0 +1,49 @@
+<div class="col-md-3">
+  <%= render 'sidebar' %>
+</div>
+<div class="col-md-9">
+  <%= render 'shared/flash_messages' %>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Inactive Bills</div>
+    <div class="panel-body">
+      <table class="bills table table-bordered table-hover">
+        <thead>
+          <th>Title</th>
+          <th>Amount</th>
+          <th>Reusable</th>
+          <th>Expires</th>
+          <th>Allow tips</th>
+        </thead>
+        <tbody>
+          <% @bills.each do |bill| %>
+            <tr data-id="<%= bill.id %>">
+              <td><%= bill.title %></td>
+              <td>
+                <% if bill.amount %>
+                  <%= number_to_currency bill.amount %>
+                <% end %>
+              </td>
+              <td><%= bill.reusable ? 'Yes' : 'No' %></td>
+              <td><%= bill.expires_at.blank? ? 'Never' : bill.expires_at.strftime('%m/%d/%Y') %></td>
+              <td><%= bill.tipping_enabled ? 'Yes' : 'No' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  jQuery(document).on('page:change', function() {
+    jQuery('.bills > tbody > tr').click(function() {
+      var row = jQuery(this);
+      showBillDetails(row);
+    });
+  });
+
+  function showBillDetails(bill) {
+    var bill_id = bill.data('id');
+    window.location.href = '/bills/' + bill_id;
+  }
+</script>
